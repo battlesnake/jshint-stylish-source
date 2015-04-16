@@ -43,9 +43,12 @@ module.exports = {
 			lines.push(line);
 
 			/* Display offending source code */
+			var maxCodeLen = 80;
 			var code = err.evidence;
+			var lead = code.match(/^\s*/)[0].length;
+			var col = err.character;
 			code = code.replace(/^\s*|\s*$/g, '');
-			code = code.substr(0, 80);
+			code = code.substr(0, maxCodeLen);
 			/* Highlight terms quoted in reason */
 			var oops = err.reason.match(/'.*?[^\\]'/g);
 			if (oops) {
@@ -59,6 +62,20 @@ module.exports = {
 				code = code.replace(rx, function (s) { return chalk.white(s); });
 			}
 			lines.push([' ', ' ', ' ', chalk.gray(code)]);
+			/* Underline point */
+			var caret = '';
+			for (var x = lead + 2; x < col; x++) {
+				if (x > maxCodeLen) {
+					x = -1;
+					break;
+				}
+				caret += '-';
+			}
+			if (x !== -1) {
+				caret += '^';
+			}
+			lines.push([' ', ' ', ' ', chalk.gray(caret)]);
+
 
 			if (isError) {
 				errorCount++;

@@ -1,40 +1,31 @@
 {
-  "name": "jshint-stylish",
+  "name": "jshint-stylish-source",
   "version": "1.0.1",
-  "description": "Stylish reporter for JSHint",
+  "description": "jshint-stylish + offending source display",
   "license": "MIT",
-  "repository": "sindresorhus/jshint-stylish",
+  "repository": "battlesnake/jshint-stylish-source",
   "author": {
-    "name": "Sindre Sorhus",
-    "email": "sindresorhus@gmail.com",
-    "url": "http://sindresorhus.com"
+    "name": "Mark K Cowan",
+    "email": "mark@battlesnake.co.uk"
   },
   "engines": {
     "node": ">=0.10.0"
   },
-  "scripts": {
-    "test": "mocha"
-  },
   "files": [
-    "index.js",
-    "stylish.js"
+    "index.js"
   ],
   "keywords": [
     "jshint",
     "reporter",
     "lint",
-    "validate",
     "stylish",
-    "elegant"
+	"source",
+	"offending"
   ],
   "dependencies": {
     "chalk": "^1.0.0",
     "log-symbols": "^1.0.0",
     "string-length": "^1.0.0",
     "text-table": "^0.2.0"
-  },
-  "devDependencies": {
-    "mocha": "*",
-    "jshint": "^2"
   }
 }

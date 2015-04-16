@@ -44,11 +44,13 @@ module.exports = {
 
 			/* Display offending source code */
 			var maxCodeLen = 80;
-			var code = err.evidence;
+			/* Min chars to display right of caret */
+			var rightOfCaret = 10;
+			var code = err.evidence || '';
 			var lead = code.match(/^\s*/)[0].length;
 			var col = err.character;
-			code = code.replace(/^\s*|\s*$/g, '');
-			code = code.substr(0, maxCodeLen);
+			lead += col > (maxCodeLen - rightOfCaret) ? code - (maxCodeLen - rightOfCaret) : 0;
+			code = code.substr(lead, maxCodeLen);
 			/* Highlight terms quoted in reason */
 			var oops = err.reason.match(/'.*?[^\\]'/g);
 			if (oops) {
@@ -64,16 +66,10 @@ module.exports = {
 			lines.push([' ', ' ', ' ', chalk.gray(code)]);
 			/* Underline point */
 			var caret = '';
-			for (var x = lead + 2; x < col; x++) {
-				if (x > maxCodeLen) {
-					x = -1;
-					break;
-				}
+			for (var x = lead; x < col - 2; x++) {
 				caret += '-';
 			}
-			if (x !== -1) {
-				caret += '^';
-			}
+			caret = chalk.gray(caret) + chalk.white('^');
 			lines.push([' ', ' ', ' ', chalk.gray(caret)]);
 
 

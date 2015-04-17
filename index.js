@@ -46,30 +46,31 @@ module.exports = {
 			var maxCodeLen = 80;
 			/* Min chars to display right of caret */
 			var rightOfCaret = 10;
-			var code = err.evidence || '';
-			var lead = code.match(/^\s*/)[0].length;
-			var col = err.character;
-			lead += col > (maxCodeLen - rightOfCaret) ? code - (maxCodeLen - rightOfCaret) : 0;
-			code = code.substr(lead, maxCodeLen);
+			var code = (err.evidence || '').replace(/\t/g, '    ');
+			var trimLeft = code.match(/^\s*/)[0].length;
+			var col = err.character - 1;
+			trimLeft += col > (maxCodeLen - rightOfCaret) ? code - (maxCodeLen - rightOfCaret) : 0;
+			code = code.substr(trimLeft, maxCodeLen);
 			/* Highlight terms quoted in reason */
-			var oops = err.reason.match(/'.*?[^\\]'/g);
+			var oops = err.reason.match(/(^|[^\w])'.*?[^\\]'($|[^\w])/g);
 			if (oops) {
 				/* RegEx-based highlighting, so escape terms as needed */
-				var rx = new RegExp(oops
+				var rxStr = '\\b(' + oops
 					.map(function (oop) {
-						return oop.substr(1, oop.length - 2)
+						return oop.replace(/^[^']*'|'[^']*$/g, '')
 							.replace(/([\.\?\+\*\(\)\^\$\[\]\\])/g, '\\$1');
 					})
-					.join('|'), 'g');
+					.join('|') + ')\\b';
+				var rx = new RegExp(rxStr, 'g');
 				code = code.replace(rx, function (s) { return chalk.white(s); });
 			}
 			lines.push([' ', ' ', ' ', chalk.gray(code)]);
 			/* Underline point */
 			var caret = '';
-			for (var x = lead; x < col - 2; x++) {
+			for (var x = trimLeft; x < col; x++) {
 				caret += '-';
 			}
-			caret = chalk.gray(caret) + chalk.white('^');
+			caret = chalk.gray(caret + '^');
 			lines.push([' ', ' ', ' ', chalk.gray(caret)]);
 
 
